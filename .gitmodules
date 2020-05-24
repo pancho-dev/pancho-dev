@@ -1,3 +1,7 @@
 [submodule "themes/ramium"]
 	path = themes/ramium
 	url = https://github.com/rafed/ramium.git
+[submodule "public"]
+	path = public
+	url = https://github.com/pancho-dev/pancho-dev.github.io.git
+	branch = master
