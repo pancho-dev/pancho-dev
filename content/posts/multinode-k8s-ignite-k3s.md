@@ -3,16 +3,16 @@ title: "Multinode k8s cluster using ignite and k3s"
 date: 2020-05-17T18:22:05-03:00
 draft: true
 ---
-Sometimes if you are working with kubernetes, or developing applications that require a multinode setup to test some functionality running a multinode cluster is a must, in some cases you could use kind which you can spin up multinode/multimaster clusters, however there might be scenarios were you still need to test or develop functions that need the real feel of a cluster with multiple nodes.  
-In the past I have run this in my local environment running vms with vagrant and virtualbox that worked very well, and I still use it for some special scenarios. But I needed something I could run more workers/masters on my local laptop one clear example I wanted to test the postgres operator from crunchydata (https://access.crunchydata.com/documentation/postgres-operator) that allows to create a postgres cluster with a stanby cluster in a different k8s cluster. Or try kilo (https://github.com/squat/kilo) to setup encrypted communications between pods and test the multidatacenter setup. Also if you want to play with CNI plugins or some advanced features this setup allows more felxibility to do so.  
-My need could be solved by vagrant and virtualbox, and in fact is a great aproach and very easy to setup everything as code in an automated fashion. But I wanted to take my laptop to the next level with something more efficient and I found a great project that allows to run firecracker https://firecracker-microvm.github.io/ micro-vms in a way that is very similar to running docker containers. The projetc is called ignite (https://github.com/weaveworks/ignite) and you will have in no time vms running using very little resources which allows to run much more worker nodes and multiple clusters at the same time.  
+Sometimes if you are working with kubernetes, or developing applications that require a multinode setup to test some functionality running a multinode cluster is a must, in some cases you could use [kind](https://kind.sigs.k8s.io/docs/user/quick-start/) which you can spin up multinode/multimaster clusters on docker, however there might be scenarios were you still need to test or develop functions that need the real feel of a cluster with multiple nodes.  
+In the past I have run this in my local environment running vms with vagrant and virtualbox, that worked very well, and I still use it for some special scenarios. But I needed something I could run more workers/masters on my local laptop. One clear example is that I wanted to test the [postgres operator from crunchydata](https://access.crunchydata.com/documentation/postgres-operator) that allows to create a postgres cluster with a stanby cluster in a different k8s cluster. Or try [kilo](https://github.com/squat/kilo) to setup encrypted communications between pods and test the multi cluster setup. Another use case was that I wanted to play with CNI plugins or some use some other advanced features, and the setup I will explain in this post allows more felxibility to do so.  
+My need could be solved by vagrant and virtualbox, and in fact is a great aproach and very easy to setup everything as code in an automated fashion. But I wanted to take my laptop to the next level with something more efficient and I found a great project that allows to run [firecracker](https://firecracker-microvm.github.io/) micro-vms in a way that is very similar to running docker containers. The project is called [ignite](https://github.com/weaveworks/ignite) and you will have in no time vms running using very little resources which allows to run much more worker nodes and multiple clusters at the same time.  
 We will install ignite in our ubuntu laptop/desktop/server and run a 3 node kubernetes cluster. The following have been tested in my ubuntu 18.04 server I run at home.
 
 ## Requirements
 
-- adm64 linux machine (No mac support at the moment as firecracker relies on linux kvm). It should be technically possible to run on arm64 as there are binaries for firecracked and some distributions support kvm on arm platforms. I have tried to run on an ubuntu 18.04 and got ignite to work but I was not able to run a vm yet (probably need to build my own image an kernel with arm support)
+- amd64 linux machine (No mac support at the moment as firecracker relies on linux kvm). It should be technically possible to run on arm64 as there are binaries for firecracker and some distributions support kvm on arm platforms. I have tried to run on an ubuntu 18.04 and got ignite to work but I was not able to run a vm yet (probably need to build my own image an kernel with arm support)
 - Ubuntu 18.04 (same steps should work in 20.04 or other ubuntu versions without many changes)
-- console and root access to the host where we will install everything
+- console or ssh and root access to the host where we will install everything
 - internet access to be able to pull images and software
 
 
@@ -29,21 +29,21 @@ $ lscpu | grep Virtualization
 Virtualization:      VT-x
 
 # Install Dependencies
-apt-get update && apt-get install -y --no-install-recommends dmsetup openssh-client git binutils
+$ apt-get update && apt-get install -y --no-install-recommends dmsetup openssh-client git binutils
 
-which containerd || apt-get install -y --no-install-recommends containerd
+$ which containerd || apt-get install -y --no-install-recommends containerd
 
 # Install CNI plugins
-export CNI_VERSION=v0.8.5
-export ARCH=$([ $(uname -m) = "x86_64" ] && echo amd64 || echo arm64)
-sudo mkdir -p /opt/cni/bin
-curl -sSL https://github.com/containernetworking/plugins/releases/download/${CNI_VERSION}/cni-plugins-linux-${ARCH}-${CNI_VERSION}.tgz | sudo tar -xz -C /opt/cni/bin
+$ export CNI_VERSION=v0.8.5
+$ export ARCH=$([ $(uname -m) = "x86_64" ] && echo amd64 || echo arm64)
+$ sudo mkdir -p /opt/cni/bin
+$ curl -sSL https://github.com/containernetworking/plugins/releases/download/${CNI_VERSION}/cni-plugins-linux-${ARCH}-${CNI_VERSION}.tgz | sudo tar -xz -C /opt/cni/bin
 
 # Install ignite binaries
-export VERSION=v0.6.3
-export GOARCH=$(go env GOARCH 2>/dev/null || echo "amd64")
+$ export VERSION=v0.6.3
+$ export GOARCH=$(go env GOARCH 2>/dev/null || echo "amd64")
 
-for binary in ignite ignited; do
+$ for binary in ignite ignited; do
     echo "Installing ${binary}..."
     curl -sfLo ${binary} https://github.com/weaveworks/ignite/releases/download/${VERSION}/${binary}-${GOARCH}
     chmod +x ${binary}
@@ -62,7 +62,7 @@ If there are any problems please refer to the ignite docs as it is a project und
 
 # Create vms
 Now that we have ignite installed and ready we can start creating vms for our kubernetes cluster. We will have 1 node named `master` and 2 worker nodes named `worker1` and `worker2`  
-Master node
+### Master node
 ```bash
 # Start the master node
 $ sudo ignite run weaveworks/ignite-ubuntu \
@@ -91,7 +91,7 @@ exit
 ```
 
 
-Worker node 1
+### Worker node 1
 ```bash
 # Start worked node 1
 $ sudo ignite run weaveworks/ignite-ubuntu \
@@ -119,7 +119,7 @@ exit
 
 ```
 
-Worker node 2
+### Worker node 2
 ```bash
 # Start worked node 1
 $ sudo ignite run weaveworks/ignite-ubuntu \
@@ -148,8 +148,8 @@ exit
 ```
 
 # Install k3s
-Now that we have 3 clean vms ready isntall a kubernetes cluster. For that we will use a lightweight kubernetes distribution called k3s (https://rancher.com/docs/k3s/latest/en/quick-start/)  
-Before we start doing the installation we need to run the following to get IP informations of the vms
+Now that we have 3 clean vms ready, lets install a kubernetes cluster. For that we will use a lightweight kubernetes distribution called k3s https://rancher.com/docs/k3s/latest/en/quick-start/
+Before we start doing the installation we need to run the following to get IP information of the vms
 ```bash
 # we need to list the vms in order to get ip information needed for following steps
 $ ignite ps
@@ -159,7 +159,7 @@ a0679083cb8cb9d4	weaveworks/ignite-ubuntu:latest	weaveworks/ignite-kernel:4.19.4
 fa96691aabac2a3f	weaveworks/ignite-ubuntu:latest	weaveworks/ignite-kernel:4.19.47	6.0 GB	1	2.0 GB	6m23s ago	Up 6m23s	10.61.0.4, 127.0.0.1, ::1		worker2
 ``` 
 
-From this command we will ned the `master` node IP which in this case is `10.61.0.2`
+From this command we will need the `master` node IP which in this case is `10.61.0.2`
 
 
 ## Install Master
@@ -254,6 +254,21 @@ $ sudo ignite ssh worker2
 # Install k3s
 $ curl -sfL https://get.k3s.io | K3S_URL=https://10.61.0.2:6443 K3S_TOKEN=K10a3037f19183b43823cb1394f466b489c988c2110b122728821d33eaa4c9f144a::server:28f6e3c31e97e08c0a5ecb500398f931 sh -
 
+[INFO]  Finding release for channel stable
+[INFO]  Using v1.18.2+k3s1 as release
+[INFO]  Downloading hash https://github.com/rancher/k3s/releases/download/v1.18.2+k3s1/sha256sum-amd64.txt
+[INFO]  Downloading binary https://github.com/rancher/k3s/releases/download/v1.18.2+k3s1/k3s
+[INFO]  Verifying binary download
+[INFO]  Installing k3s to /usr/local/bin/k3s
+[INFO]  Creating /usr/local/bin/kubectl symlink to k3s
+[INFO]  Creating /usr/local/bin/crictl symlink to k3s
+[INFO]  Creating /usr/local/bin/ctr symlink to k3s
+[INFO]  Creating killall script /usr/local/bin/k3s-killall.sh
+[INFO]  Creating uninstall script /usr/local/bin/k3s-agent-uninstall.sh
+[INFO]  env: Creating environment file /etc/systemd/system/k3s-agent.service.env
+[INFO]  systemd: Creating service file /etc/systemd/system/k3s-agent.service
+[INFO]  systemd: Enabling k3s-agent unit
+Created symlink /etc/systemd/system/multi-user.target.wants/
 
 ```
 
@@ -292,7 +307,7 @@ kube-system   traefik-prometheus   ClusterIP      10.43.228.116   <none>        
 kube-system   traefik              LoadBalancer   10.43.143.31    10.61.0.2     80:32686/TCP,443:31374/TCP   15m
 
 ```
-As we can see out of the box we have services and pods running already. In fact, k3s basic installation installed traefik as ingress controller and load balancers on by default on port 80 and 443, which means we already have an ingress proxy running in all the nodes in the cluster running in those ports. And any service we create as a lod balancer on a specific port will be available in all nodes.
+As we can see out of the box we have services and pods running already. In fact, k3s basic installation installed traefik as ingress controller and load balancers on by default on port 80 and 443, which means we already have an ingress proxy running in all the nodes in the cluster running in those ports. And any service we create as a load balancer on a specific port will be available in all nodes.
 
 
 ## Run some basic workload
@@ -398,3 +413,11 @@ BODY:
 -no body in request-
 
 ```
+
+# Conclusion
+
+It is pretty easy to run this setup and you will get a nice way to run a few nodes on a local laptop, which will allow to learn and develop kubernetes features but still having a simple way to install it.  
+There are many ways to have a similar setup with other projects or distributions, in my case I needed to have the nodes running as independent vms, but there are other projects like minikube or microk8s which give similar features to develop locally with k8s in mind, each project have it's advantages and disadvantanges, at this time it made sense to me to try this particular approach, probably in future posts I will be playing around with other k8s distributions as well as other virtualization for different use cases.  
+The major hurdle I found with this project was that I wanted to run this in my Mac Laptop and since firecraker relies on kvm for virtualization it is not possible to run it on mac, I might be showing how to do something similar on a Mac in a future post if I find something that convinces me.  
+Some follow up tasks would be to test this setup using [multipass](https://multipass.run/) which suports `Hypervisor.framework / hyperkit` as a backend as well as `virtualbox` to start ubuntu vms, to be honest I have'nt tested it yet, but looks good so stay tunned for following posts.  
+  
