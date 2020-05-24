@@ -1,0 +1,47 @@
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+      
+      
+	  <url>
+	    <loc>http://pancho.dev/posts/multinode-k8s-ignite-k3s/</loc>
+	    <lastmod>2020-05-17</lastmod>
+        
+
+        
+	  </url>
+	  
+  
+      
+      
+	  <url>
+	    <loc>http://pancho.dev/</loc>
+	    <lastmod>2020-05-17</lastmod>
+        
+
+        
+	  </url>
+	  
+  
+      
+      
+	  <url>
+	    <loc>http://pancho.dev/posts/</loc>
+	    <lastmod>2020-05-17</lastmod>
+        
+
+        
+	  </url>
+	  
+  
+      
+      
+	  <url>
+	    <loc>http://pancho.dev/tags/</loc>
+	    <lastmod>0001-01-01</lastmod>
+        
+
+        
+	  </url>
+	  
+  
+</urlset>
