@@ -1,19 +1,19 @@
 ---
 title: "Creating Kubernetes Kind Cluster"
 date: 2020-05-30T15:11:30-03:00
-draft: true
+draft: false
 ---
 
 In an earlier post I showed how to create [Multinode k8s cluster using ignite and k3s]({{< relref "multinode-k8s-ignite-k3s.md" >}}), while this was a good experience I needed to test some other tools, and this time I decided to go for kind (kubernetes in docker). Which looks like a good approach to work with clusters locally and it will still be lightweight as the kubernetes "nodes" will be actually running as docker containers. This at first glance looks like a easier approach and seems to work in a similar way in Mac, linux or wirndows, which gives a great advantage.  
-Also this time I choose to work with kind because it allows to do a lot of stuff like simulating multiple nodes and multiple workernodes, in my case I did wanted multiple nodes to try things like running postgres clusters and use anti affinity to develop in my laptop some automation. It is very fast to start a cluster and play around with multiple clusters. Another cool feature is that is easy to start a cluster with multiple masters and the setup of the cluster seems a very "vanilla" k8s cluster whichis and advantage to be running things similar to what you would run in production others like k3s or microk8s use a lot of lightweight components that might not actually look like "production clusters", huwever this is still a very personal opinion and depends on th needs of the developer and all have pros and cons. We will see how it looks like after I actually finish the post and get some conclusions.
+Also this time I choose to work with kind because it allows to do a lot of stuff like simulating multiple control plane nodes and multiple workernodes. In my case I did wanted multiple nodes to try things like running postgres clusters and use anti affinity to develop in my laptop some automation around postgres clusters. It is very fast to start a cluster and play around with multiple clusters. Another cool feature is that is easy to start a cluster with multiple masters and the setup of the cluster seems a very "vanilla" k8s cluster which is and advantage to be running things similar to what you would run in production others like k3s or microk8s use a lot of lightweight components that might not actually look like "production clusters", however this is still a very personal opinion and depends on the needs of the developer and all have pros and cons. We will see how it looks like after I actually finish the post and get some conclusions.
 
 # Installation
 
-Installation of kind is pretty straightforward, the requirement is to have docker already installed in your laptop/seever/vm and follow the [Official Kind Guide](https://kind.sigs.k8s.io/docs/user/quick-start/)
+Installation of kind is pretty straightforward, the requirement is to have docker already installed in your laptop/server/vm and follow the [Official Kind Guide](https://kind.sigs.k8s.io/docs/user/quick-start/)
 
 # Getting a cluster going
 
-We will be creating a cluster in a similar way we created a cluster with other tools[in a past post]({{< relref "multinode-k8s-ignite-k3s.md" >}}) and at the end of the post I will do some basic comparison of what I experienced working with both.  
+We will be creating a cluster in a similar way we created a cluster with other tools [in a past post]({{< relref "multinode-k8s-ignite-k3s.md" >}}) and at the end of the post I will do some basic comparison of what I experienced working with both.  
 
 ## Creating a cluster
 
@@ -43,7 +43,8 @@ $ docker ps
 CONTAINER ID        IMAGE                  COMMAND                  CREATED             STATUS              PORTS                       NAMES
 4a116756e882        kindest/node:v1.18.2   "/usr/local/bin/entr…"   3 minutes ago       Up 3 minutes        127.0.0.1:65236->6443/tcp   kind-control-plane
 
-# now let's show docker netowrks, kind created it's own network to be isolated for other containers that might be running in docker.
+# now let's show docker netowrks, kind created it's own network 
+# to be isolated for other containers that might be running in docker.
 $ docker network ls
 NETWORK ID          NAME                DRIVER              SCOPE
 227c42913b8d        bridge              bridge              local
@@ -69,7 +70,7 @@ local-path-storage   local-path-provisioner-bd4bb6b75-4w9cr       1/1     Runnin
 $ kind delete cluster
 Deleting cluster "kind" ...
 ```
-This a a very basic cluster setup, however I really wanted somthieng more complex to work with. Follow the link if you want to see a full list of what can be tweaked in [kind configurations](https://kind.sigs.k8s.io/docs/user/configuration/)  
+This a a very basic cluster setup, however I really wanted something more complex to work with. Follow the link if you want to see a full list of what can be tweaked in [kind configurations](https://kind.sigs.k8s.io/docs/user/configuration/)  
 Let's see an example configuration with 1 control plane (master node) and 2 worker nodes.  
 We need to create a config file lets name it `my-cluster.yml` with the following.
 ```yaml
@@ -128,18 +129,21 @@ kube-system          kube-proxy-ph5z8                                   1/1     
 kube-system          kube-scheduler-my-cluster-control-plane            1/1     Running   0          6m
 local-path-storage   local-path-provisioner-bd4bb6b75-2rdpn             1/1     Running   0          5m45s
 ```
-With this setup we are running a 3 "nodes" k8s cluster so we are ready to start applying yaml files to deploy some workloads... But wait, if you are running on linux you will be able to access the k8s "nodes" with the ip docker assigned to the nodes, but when running in Mac or Windows ther eare some extra steps to take, as we all know docker in mac or windows still runs inside a linux vm, so we need to take extra steps to get access to the workloads we will be setting up.  
+With this setup we are running a 3 "nodes" k8s cluster so we are ready to start applying yaml files to deploy some workloads...  
+But wait, if you are running on linux you will be able to access the k8s "nodes" with the ip docker assigned to the nodes, but when running in Mac or Windows there are some extra steps to take, as we all know docker desktop in mac or windows still runs inside a linux vm, so we need to take extra steps to get access to the workloads we will be setting up.  
 Before proceeding we will have to delete our cluster and 
 ```bash
 $ kind delete clusters my-cluster
 Deleted clusters: ["my-cluster"]
 ```
-We will need to setup ingress controller and some port mappings to the workloads we want to run, if we want to access the workloads from the machine. Here are the official docs hot to configure an [ingres](https://kind.sigs.k8s.io/docs/user/ingress/) in kind.  
+We will need to setup ingress controller and some port mappings to the workloads we want to run, if we want to access the workloads from the machine. Here are the official docs how to configure an [ingres](https://kind.sigs.k8s.io/docs/user/ingress/) in kind.  
 
 ```bash
 # To create the cluster again we will take a dirrefent approach.
-# we will use a one shot command passing the yaml config from the cli, this saves a step to prevent creating the file.
-# we will add the ports we want to access. normally would be 80 and 443 but in this case I also added 8080
+# we will use a one shot command passing the yaml config from the cli, 
+# this saves a step to prevent creating the file.
+# we will add the ports we want to access. normally would be 80 
+# and 443 but in this case I also added 8080
 $ cat <<EOF | kind create cluster --name=my-cluster --config=-
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
@@ -176,8 +180,11 @@ kubectl cluster-info --context kind-my-cluster
 
 Have a nice day! 👋
 
-# kind doesn't have an ingress controller set by default so we will need to setup one.
-# in the following example we will setup an nginx ingress proxy but we could usin any other ingresses like contour, ambassador, traefik, etc
+# kind doesn't have an ingress controller set by default
+# so we will need to setup one.
+# In the following example we will setup an nginx ingress 
+# proxy but we could usin any other ingresses 
+# like contour, ambassador, traefik, etc
 
 # lets check the nodes we have
 $ kubectl get nodes
@@ -248,11 +255,15 @@ kube-system          kube-proxy-tlhsk                                   1/1     
 kube-system          kube-scheduler-my-cluster-control-plane            1/1     Running     0          10m
 local-path-storage   local-path-provisioner-bd4bb6b75-nqdgc             1/1     Running     0          10m
 
-# After finishing the setup lets show the containers running in docker. 
-# We can see in this case the my-cluster-control-plane container has the ports 80, 443, and 8080 
+# After finishing the setup lets show the 
+# containers running in docker. 
+# We can see in this case the my-cluster-control-plane 
+# container has the ports 80, 443, and 8080 
 # forwarded to allow traffic on the ingress. 
-# That will allow use to use http://localhost or https://localhost or http://localhost:8080
-# there is a lmitation that we can only expose those ports only in 1 container.
+# That will allow use to use http://localhost 
+# or https://localhost 
+# there is a lmitation that we can only expose 
+# those ports only in 1 container.
 $ docker ps
 CONTAINER ID        IMAGE                  COMMAND                  CREATED             STATUS              PORTS                                                                                         NAMES
 a9b53a526c9e        kindest/node:v1.18.2   "/usr/local/bin/entr…"   13 minutes ago      Up 13 minutes                                                                                                     my-cluster-worker
@@ -294,7 +305,8 @@ spec:
   - port: 8080
 EOF
 
-# setup the ingress controller to forward /helo path to helo-node service.
+# setup the ingress controller to forward
+# /helo path to helo-node service.
 $ cat <<EOF | kubectl apply -f -
 apiVersion: extensions/v1beta1
 kind: Ingress
@@ -310,7 +322,8 @@ spec:
           servicePort: 8080
 EOF
 
-# After that we can see the service ibn our laptop/vm responding in localhost
+# After that we can see the service in 
+# our laptop/vm responding in localhost
 $ curl http://localhost/helo
 CLIENT VALUES:
 client_address=10.244.0.2
@@ -342,7 +355,7 @@ BODY:
 
 I really enjoyed running kind on my laptop for this test. It's a great tool to run kubernetes clusters very fast in a local laptop, the official documentation is good.  
 I like the fact that I could run multiple "nodes" in my cluster also there is some tunning that can be done to suit your needs, it is very easy to spin up clusters with multiple control planes, it is very lightweight as it is running docker containers (if you are running on windows or Mac, it's still running 1 vm).  
-Takes care of all boilerplate configs specially kubectl config, and integrates in a seemsless way with your exisiting kube config adding and removing contexts as you create clusters, this is great because in thepast I had trouble with other tools screwing my kube config.  
+Takes care of all boilerplate configs specially kubectl config, and integrates in a seemless way with your exisiting kube config adding and removing contexts as you create clusters, this is great because in the past I had trouble with other tools screwing my kube config.  
 But the feature I liked the most is speed, everything happens really fast and it is easy to teardown and spin it back up in a matter of minutes without a lot of effort, making it easy to start over when things go wrong.  
-What I din't like, is that there are some limitations because of the fact that it's running in docker, specially if you are working with ingresses configurations or load balancers some special configurations or hacks need to be put in place to make them work which makes hardred to reproduce staging or production environments when trying to automate deployments. It is limite in the netowrking side when tryning some CNI plugins like mutlus where you might need to have "nodes" with special configurations in order to get multiple networks working.  
+What I din't like, is that there are some limitations because of the fact that it's running in docker, specially if you are working with ingresses configurations or load balancers some special configurations or hacks need to be put in place to make them work which makes harder to reproduce staging or production environments when trying to automate deployments. It is limited in the networking side when tryning some CNI plugins like multus where you might need to have "nodes" with special configurations in order to get multiple networks working.  
 However, it is still a great tool to develop and work with and still have a good environment to develop in a local environment. It is still considered alpha stage and it can't be deployed in production environments, it's main purpose is development of applications and kubernetes components.
