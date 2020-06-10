@@ -1,7 +1,7 @@
 ---
 title: "The misunderstood load average in linux hosts"
 date: 2020-06-07T20:02:27-03:00
-draft: true
+draft: false
 ---
 
 Ever wondered when someone runs the command `uptime` in a linux host what the values in the `load average:` section mean? well I have wondered about it many times in my carreer. And this should be a simple question to ask a seasoned linux administrator or developer, right? well it's not entirely true, as the load average value in a linux hosts probably is the most misunderstood term and often associated with the wrong concepts. In this post I will explain and tell a bit more about my experience about load average value in linux and how it helps me everyday to spot issues in infrastructure.  
