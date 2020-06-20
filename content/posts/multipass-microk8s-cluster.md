@@ -1,7 +1,7 @@
 ---
 title: "Multipass Microk8s Cluster on multiple nodes"
 date: 2020-06-13T11:37:56-03:00
-draft: true
+draft: false
 ---
 
 A couple of posts ago I talked about multinode kubernetes clusters and the benefis of them running them for developing automation, testing software and configurations. I still think is that most developers probably don't need this setup or can live with a simpler setup. My motivation is because I work on cloud infrastructure and automation of delployments, databases, and lots of complex scenarios that running single node k8s cluster doesn't fit my needs. This time I will try another option to create multinod clusters. I have used [kind](https://kind.sigs.k8s.io/docs/user/quick-start/), [ignite](https://github.com/weaveworks/ignite) micro vms and [k3s](https://rancher.com/docs/k3s/latest/en/quick-start/) in blog posts. This time is the turn of some tools from Cannonical which seemt o work together pretty well. I will create a multinode cluster running vms created with [multipass](https://multipass.run/) and [microk8s](https://microk8s.io/).
