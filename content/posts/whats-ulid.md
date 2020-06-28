@@ -9,11 +9,11 @@ So this time I will introduce the `ulid`. Spoiler alert, it's an ID or at least 
 
 ### Background
 I just want to give some background how I came across ulid and why I found it handy to use. I regularly find myself browsing through code from open source projects, even if I am not familiar with the language the projects are written, I always take a peek at the code. I have this obsesion to know how things work under the hood, which has helped me to solve many tricky issues operating open source software.  
-So one day I was looking at [prometheus](https://prometheus.io/) data folder and I found the following
+So one day I was looking at [Prometheus](https://prometheus.io/) data folder and I found the following
 
 ```bash
 
-# Looking at files and folders in the prometheus data folder
+# Looking at files and folders in the Prometheus data folder
 $ ls -l
 total 84
 drwxr-xr-x 3 nobody nogroup  4096 May 29 21:00 01E9H3RBHR7NP48DNJJK99SRVN
@@ -48,7 +48,7 @@ drwxr-xr-x 2 nobody nogroup 4.0K Jun 27 17:00 chunks
 -rw-r--r-- 1 nobody nogroup  279 Jun 27 17:00 meta.json
 -rw-r--r-- 1 nobody nogroup    9 Jun 27 17:00 tombstones
 ```
-Ever since I looked into that folder I wondered about the logic behind the design. Then some day I was looking trought the prometheus code and I came across the term ulid. Off course I quickly googled the term and found out what it was, then the whole directory structure stated to make sense. I won't get into details of that as it is a subject matter that probably could get 2 or 3 blog posts itself. But I will get into details what ulid are and it might give developers some perspective to solve some problems in a clever way like promtetheus developers did.
+Ever since I looked into that folder I wondered about the logic behind the design. Then some day I was looking trought the Prometheus code and I came across the term ulid. Off course I quickly googled the term and found out what it was, then the whole directory structure stated to make sense. I won't get into details of that as it is a subject matter that probably could get 2 or 3 blog posts itself. But I will get into details what ulid are and it might give developers some perspective to solve some problems in a clever way like promtetheus developers did.
 
 
 # What is it then?
@@ -110,7 +110,7 @@ Some examples:
 - picture history
 - revision/version control of files
 - Events in a distributed system
-- Time series blocks (prometheus use case)
+- Time series blocks (Prometheus use case)
 
 I wanted to point out a use case that catches my attention and probably would have saved some problems with race contitions when sending messages in an async messaging plattform and still have events that need to be ordered. In an distributed system sending messages/events to other systems and attaching a ulid to the message would help prevent or detect race conditions, it won't guarantee that my messages arrived in order but at least I would know that I got a message older than a message that I already received. Helping detect and remediate the situation that might have generated a race condition. Well this is not a bulletproof approach but whould helped to detect some of this situations.
 
