@@ -1,7 +1,7 @@
 ---
 title: "What's a ULID"
 date: 2020-06-27T14:35:31-03:00
-draft: true
+draft: false
 ---
 
 This time I will talk about someting I found out very recently, and I found interesting to share this information as it might be handy for developers to use when the use case fits.  
