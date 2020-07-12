@@ -13,7 +13,7 @@ For the tests as I metioned before I will be running vms using multipass, and ad
 Preparing vms for running tests.
 ```bash
 # Start vms with multipass
-$ for i in {1..5}
+$ for i in {1..3}
 > do cat <<EOF | multipass launch --name testvm${i} -m 1G --cloud-init -
 > users:
 >   - default
@@ -29,8 +29,6 @@ $ for i in {1..5}
 Launched: testvm1
 Launched: testvm2
 Launched: testvm3
-Launched: testvm4
-Launched: testvm5
 done
 
 $ mkdir ansible
@@ -95,41 +93,31 @@ PLAY [configure vm(s)] *********************************************************
 
 TASK [Gathering Facts] ******************************************************************************************************************************************************
 Saturday 11 July 2020  19:08:23 +0000 (0:00:00.147)       0:00:00.147 *********
-ok: [10.0.100.108]
 ok: [10.0.100.43]
 ok: [10.0.100.99]
 ok: [10.0.100.157]
-ok: [10.0.100.112]
 
 TASK [fcastello.docker : install basic required software] *******************************************************************************************************************
 Saturday 11 July 2020  19:08:30 +0000 (0:00:07.632)       0:00:07.779 *********
-changed: [10.0.100.112]
 changed: [10.0.100.99]
 changed: [10.0.100.157]
 changed: [10.0.100.43]
-changed: [10.0.100.108]
 
 TASK [fcastello.docker : Add docker gpg apt key] ****************************************************************************************************************************
 Saturday 11 July 2020  19:16:30 +0000 (0:07:59.158)       0:08:06.939 *********
 changed: [10.0.100.157]
-changed: [10.0.100.108]
 changed: [10.0.100.99]
 changed: [10.0.100.43]
-changed: [10.0.100.112]
 
 TASK [fcastello.docker : get architecture] **********************************************************************************************************************************
 Saturday 11 July 2020  19:16:35 +0000 (0:00:05.547)       0:08:12.486 *********
-changed: [10.0.100.108]
 changed: [10.0.100.99]
-changed: [10.0.100.112]
 changed: [10.0.100.157]
 changed: [10.0.100.43]
 
 TASK [fcastello.docker : Add Docker apt repository] *************************************************************************************************************************
 Saturday 11 July 2020  19:16:36 +0000 (0:00:01.170)       0:08:13.656 *********
-changed: [10.0.100.108]
 changed: [10.0.100.99]
-changed: [10.0.100.112]
 changed: [10.0.100.157]
 changed: [10.0.100.43]
 
@@ -137,37 +125,27 @@ TASK [fcastello.docker : Install docker-ce package] ****************************
 Saturday 11 July 2020  19:17:01 +0000 (0:00:24.326)       0:08:37.983 *********
 changed: [10.0.100.157]
 changed: [10.0.100.43]
-changed: [10.0.100.108]
 changed: [10.0.100.99]
-changed: [10.0.100.112]
 
 TASK [fcastello.node_exporter_docker : make sure python-docker package is present] ******************************************************************************************
 Saturday 11 July 2020  19:19:07 +0000 (0:02:06.153)       0:10:44.136 *********
 ok: [10.0.100.157]
-ok: [10.0.100.108]
 ok: [10.0.100.99]
-ok: [10.0.100.112]
 ok: [10.0.100.43]
 
 TASK [fcastello.node_exporter_docker : make sure the diretory for text collectors exist] ************************************************************************************
 Saturday 11 July 2020  19:19:12 +0000 (0:00:05.616)       0:10:49.752 *********
-changed: [10.0.100.112]
 changed: [10.0.100.99]
 changed: [10.0.100.157]
-changed: [10.0.100.108]
 changed: [10.0.100.43]
 
 TASK [fcastello.node_exporter_docker : run prometheus node exporter] ********************************************************************************************************
 Saturday 11 July 2020  19:19:14 +0000 (0:00:01.295)       0:10:51.048 *********
-changed: [10.0.100.108]
 changed: [10.0.100.99]
 changed: [10.0.100.43]
-changed: [10.0.100.112]
 changed: [10.0.100.157]
 
 PLAY RECAP ******************************************************************************************************************************************************************
-10.0.100.108               : ok=9    changed=7    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
-10.0.100.112               : ok=9    changed=7    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 10.0.100.157               : ok=9    changed=7    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 10.0.100.43                : ok=9    changed=7    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
 10.0.100.99                : ok=9    changed=7    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0
@@ -186,7 +164,7 @@ fcastello.docker : get architecture --------------------------------------------
 Playbook run took 0 days, 0 hours, 11 minutes, 9 seconds
 ```
 
-Now we have our host and 5 vms to start playing around with the cpu and looking at metrics and explaint what they are.
+Now we have our host and 3 vms to start playing around with the cpu and looking at metrics and explaint what they are.
 
 
 # CPU metrics
