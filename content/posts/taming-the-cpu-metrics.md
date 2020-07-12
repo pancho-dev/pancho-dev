@@ -14,16 +14,16 @@ Preparing vms for running tests.
 ```bash
 # Start vms with multipass
 $ for i in {1..3}
-> do cat <<EOF | multipass launch --name testvm${i} -m 1G --cloud-init -
-> users:
->   - default
->   - name: francisco
->     sudo: ALL=(ALL) NOPASSWD:ALL
->     groups: users, admin
->     ssh_import_id: None
->     lock_passwd: true
->     ssh_authorized_keys:
->       - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC4/CTfClQTZ5iCpje5irALaz2XcQq9fbG2M1coXYwrAOv77HaeAUnBjEfiEl6IF/FnCLFRD3im/CHsOAgMzg1vKAjBJaeve4gaz+ikkNkZ/KT8R4vz7PncvO1yFQiLGYDyTqWfk+GvZ8OZ4tPgiGZsmbNg/qKZbwRUUvg9bberm5BCQL+TjNJjoVHJnOgg3Y1XJ7LtcbZV3e5It1U3SikohTD0v3RHAfHeOEJKS02SWiIDToMEejYwEuuQ4UY3dkb/vOVeHYLYUOuVVnHYU9/yGOS1e4pIOOocSTCUFdQfg/aOmVjbSc1ifjqUpfBQT3tnNSSTT50KRFkRw7T8tuBl1m9rZ0pt538nzAPKzUE22OZmbD1Fv1HBq/B4F16vW6HmjFRha9AjoTX838mhgwt3CUzt6iKkIURz4A/kW/gaWTcw4TEoEHHa1KHhTP7eQrRu16fzU2ZTqfa+rDEhrZlpLtKS6BH1nM4wHLHSi/3cNN6udZ0QS3K+Dv5kPWCs9Nw9BIih+iI885ofmz85oePjcLFsMOCRb3s1D51WIsFCjGI5hseBi3BH8kF9vtFKu3m8lioVsAVJIglTOWibJ7bONzkcNT08/66nCNC1h461BmZ+q7NsIwULlleuiiD7a2KTKX/olCPK4vph4/QsORvwqUE1AtvKLaWvlOqLlj+N+Q== franciscocastello@gmail.com
+do cat <<EOF | multipass launch --name testvm${i} -m 1G --cloud-init -
+users:
+  - default
+  - name: testuser
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: users, admin
+    ssh_import_id: None
+    lock_passwd: true
+    ssh_authorized_keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCyrauoMmTD5Ar2MAvYd7hCXPKXLR75MabnZvMLyNxFVdbEX0M8Sz+UKIlnOGGUwoFgcl1xj7Bt7oUS/TVWBRBP/r9DQ47FxUZkEBycTty6hESkTSs56If7jMio56ygSTghA1aMYP8mGmVdcjWH0DYc1xgJylfvjuuUEaLJyMvWZeVGwUhPbX3/wqNSsGXczSTRJuYqfL+/tcAAs2u74Hg0YdY8GTT6pcKtchdsR4o9zih6MQktIotvAYinaD71inaggrN67DqIH8MfKk97jE8IIn1wjtMphuZEdRdVvn4ZbYQok1Fnm1kTelxLNWNar8h9hwGRx0O0lQyG1Todl3yL testuser
 > EOF
 > done
 Launched: testvm1
