@@ -188,6 +188,7 @@ Now we have our host and 5 vms to start playing around with the cpu and looking 
 # CPU metrics
 
 To start viewing usage lets talk about what are the different components of cpu metrics. For that we can take a look at a screenshot for the `top` command.  
+
 ![](taming-the-cpu-metrics/top1.png)
 CPU metrics in the top command show the percentage spent in each one of this "states", we will talk more about what they are.
 - `us` a.k.a user: this is the cpu time used by userspace processes. Most applications will show up within this percentage when they are using cpu.
@@ -198,5 +199,55 @@ CPU metrics in the top command show the percentage spent in each one of this "st
 - `hi` a.k.a hardware interrupt or `si` a.k.a. software interrupt: This is the time the cpu spent processing interrupts, interrupts can be processed also by software with processes called softirqd or when the kernel spent time procesing a hardware interrupt. Either `hi` and `si` will mean that there is interaction with the hardware happening. A normal case would be that this will spike when having high network traffic as the network card will generate lots of interrupts and it will affect the cpu usage.
 - `st` a.k.a. steal: this is the time spent waiting to get cpu time. This value will only show up when running in virtualized environments. The steal value means that someone else (a.k.a another virtual machine most likely) was using the cpu in this time, this happens when multiple virtual machines are charing the same cores. It's a veru interesteing metrics to watch, specially when we are running vm's in the cloud or when we run virtual machines. Helps identify if the undelying host is underprovisioned or identify "noisy neighbors".
 
-Next I will do some test to try to spike each one of the values and show some situations that we might fing in cpu metrics which will help us understand more the usage in the server we are watching.
+Next I will do some tests to try to spike each one of the values and show some situations that we might fing in cpu metrics which will help us understand more the usage in the server we are watching. I will also show some sittuations that I recorded in my home lab doing other tests.  
+Most tests were perfomed in the vms that we created at the start of the post and they were added to a prometheus/grafana setup using the node exporter we installed there, which is out of the scope of this blog post.
+
+## Idle server
+On of the easiest situations to catch is to know that our server is idle, or doing nothing. This is particularly usefull when I want to find servers that have been overprovisioned and are being undeused. Catching servers with high `idle` metrics will helpo ups either get smalled vms if we are running in the cloud, saving us some money or to know this server can be used for more applications and opimizing the usage of servers.  
+
+![](taming-the-cpu-metrics/idle1.png)
+We can see the cpus usage of one of the newly created vms named testvm1. In this graph we can see most of the area is painted in blue, showing that most of the percentage time of the cpu as spend in `idle` which means that this vm is doing nothing at the time of shown in the graph.
+
+## Userspace usage
+Other common use case we catch with cpu metrics is to see applications running in userspace that use the cpu. This is normal and we should expect to see this percentage go higher when applications are busier.
+To generate userspace usage in one of the vms, for that will will run a container to stress test the cpu
+```bash
+# log in to testvm1
+$ multipass shell testvm1
+
+# Run docker container that will hog 1 cpu
+ubuntu@testvm1:~$ sudo docker run -it --name cpustress --rm containerstack/cpustress --cpu 1 --timeout 90s --metrics-brief
+Unable to find image 'containerstack/cpustress:latest' locally
+latest: Pulling from containerstack/cpustress
+c76b39ada3ed: Pull complete
+badc43fe7dea: Pull complete
+Digest: sha256:a72da3632d53fc69a5f60715a1b594b56e1a7d94c40963efbd4cdc37ca37d77e
+Status: Downloaded newer image for containerstack/cpustress:latest
+stress-ng: info: [1] dispatching hogs: 1 cpudocker run -it --name cpustress --rm containerstack/cpustress --cpu 1 --timeout 90s --metrics-brief
+stress-ng: info: [1] successful run completed in 90.05s
+stress-ng: info: [1] stressor      bogo ops real time  usr time  sys time   bogo ops/s   bogo ops/s
+stress-ng: info: [1]                          (secs)    (secs)    (secs)   (real time) (usr+sys time)
+stress-ng: info: [1] cpu              12992     90.05     88.83      0.01       144.28       146.24
+```
+We ran a cpu stress test for 90 seconds and we can see the screenshots of the metrics.
+
+![](taming-the-cpu-metrics/user1.png)
+In the graph we can see the during the stress test of the cpu, the testvm1 spiked the user space usage, shown as the yellow area, off course the stress test took all available cpu at the time of the test, but we can see a tiny spike in the green area which shows the time spent in kernelspace processes, this is because even userspace processes can have interaction throught with the kernel deending on the tasks the process is doing. 
+
+![](taming-the-cpu-metrics/user2.png)
+ I show a screenshot of the top command when the stress test war running and it shows the percentages the process was running, however top shows the instant values and not the history.  
+ Now let's take a look at the underlyng host running testvm1
+
+![](taming-the-cpu-metrics/user3.png)
+
+This last graph shows the cpu usage of the host running the vms, as we can see teh yellow area spiked to 50% when the stress test was being run. This is do to the fact that the vm was assinged only 1 vcpu and the physical host has 2 cores.
+
+## High I/O
+
+## High interrupts
+
+## Noisy Neighbors
+
+
+
 
