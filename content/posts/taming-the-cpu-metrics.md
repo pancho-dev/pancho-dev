@@ -185,3 +185,18 @@ Playbook run took 0 days, 0 hours, 11 minutes, 9 seconds
 Now we have our host and 5 vms to start playing around with the cpu and looking at metrics and explaint what they are.
 
 
+# CPU metrics
+
+To start viewing usage lets talk about what are the different components of cpu metrics. For that we can take a look at a screenshot for the `top` command.  
+![](taming-the-cpu-metrics/top1.png)
+CPU metrics in the top command show the percentage spent in each one of this "states", we will talk more about what they are.
+- `us` a.k.a user: this is the cpu time used by userspace processes. Most applications will show up within this percentage when they are using cpu.
+- `sy` a.k.a system: this is the cpu time spend by kernel processes, everytime there is interacion from user space processes, or I/O, or processing network traffic; anything that need to interact with the kernel will show up within this percentage.
+- `ni` a.k.a. nice: this is the cpu time spent by userspace processed that had been `niced`. Setting nice to a process will control the priority this process, this can be used to set priority lower when the process is invasive, or set to higher priority when the process need more guarateed cpu time, for example realtime applications. When a userspace process has been set with nice it will show in this metric.
+- `id` a.k.a. idle: this is the time where the cpu was idle, pretty much waiting to be used. In busy sistems this will hae a low value, and in not busy systems this will be high.
+- `wa` a.k.a. iowait: this is the time that the cpu was spent by waiting for I/O to happen. This value willl be high when there is a lot of access to disk or accessing hardware. But mostly will be when we are doing heavy reading/writing to disk.
+- `hi` a.k.a hardware interrupt or `si` a.k.a. software interrupt: This is the time the cpu spent processing interrupts, interrupts can be processed also by software with processes called softirqd or when the kernel spent time procesing a hardware interrupt. Either `hi` and `si` will mean that there is interaction with the hardware happening. A normal case would be that this will spike when having high network traffic as the network card will generate lots of interrupts and it will affect the cpu usage.
+- `st` a.k.a. steal: this is the time spent waiting to get cpu time. This value will only show up when running in virtualized environments. The steal value means that someone else (a.k.a another virtual machine most likely) was using the cpu in this time, this happens when multiple virtual machines are charing the same cores. It's a veru interesteing metrics to watch, specially when we are running vm's in the cloud or when we run virtual machines. Helps identify if the undelying host is underprovisioned or identify "noisy neighbors".
+
+Next I will do some test to try to spike each one of the values and show some situations that we might fing in cpu metrics which will help us understand more the usage in the server we are watching.
+
