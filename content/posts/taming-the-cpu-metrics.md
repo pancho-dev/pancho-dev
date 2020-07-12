@@ -85,6 +85,10 @@ EOF
     - name: "Run node exporter"
       import_role:
         name: fcastello.node_exporter_docker
+    - name: "install iperf"
+      apt:
+        name: iperf
+        state: present
 EOF
 (.env)$ ansible-playbook config.yml
 PLAY [configure vm(s)] ******************************************************************************************************************************************************
@@ -243,8 +247,21 @@ In the graph we can see the during the stress test of the cpu, the testvm1 spike
 This last graph shows the cpu usage of the host running the vms, as we can see teh yellow area spiked to 50% when the stress test was being run. This is do to the fact that the vm was assinged only 1 vcpu and the physical host has 2 cores.
 
 ## High I/O
+In this section I will show something I gathered from other tests I was running in a raspberry pi kubernetes cluster, this was handy as I recently was playing with that cluster and I already had the data to show this kind of situations.  
+So this test was a raspberry pi running a kubernetes node and that snapshot of the graph was taken at the time when I was scaling a deployment from 5 to 50 pods. This generated a lot of metrics there which I will explain.
+
+![](taming-the-cpu-metrics/io1.png)
+
+This graph gets more interesting as we have many things happening there.  
+- Red area: is the percentage the cpu spent in iowait. Which means it was waiting to for read/writes to the disk, in this case makes sense as it was probably downloading container images and writing them to the disk. The value seems very high, but considering that the raspberry pi is writing to an sd card which is slow this value makes sense. In my experience, on systems where this value goes above 20% or 30% you will experience some performance issues, off course it depends on what the server is running and the applications tolerance to latency.
+- Blue area: idle time, I am nt going to explain this one as it was already explained before
+- Yellow area: userspace percentage, also not going to explain as it ewas already explained.
+- Green area: this is processes running in kernel space, in this case it made sense as kubernetes was probably doing a lot of operations at the kernel level to start and schedule containers on the node. Also when having high I/O also there is a spike in kernelspace processes as all reads/writes pass thorugh the kernel somehow.
+- Light Blue Area: this is the time spent by processes that were `niced` which means that either were assinge higher or lower prioritie than the rest of the processes. In this case it makes sense as probably at the moment kubernetes was running a process that needed more priority than others, or the other way around. In fact this will give as a hint to investgate further what those process were and how to optimize if they were causing issues.
 
 ## High interrupts
+
+
 
 ## Noisy Neighbors
 
