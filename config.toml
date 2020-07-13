@@ -3,14 +3,14 @@ languageCode = "en-us"
 title = "pancho.dev"
 #CanonifyURLs=true
 theme = "ramium"
-disqusShortname = "disqus-code"
+#disqusShortname = "disqus-code"
 googleAnalytics = "UA-920705-12"
 pluralizeListTitles = false
 enableemoji = true
 
 [params]
     description = "A description for the meta tag of the site"
-    googleSearch = "google-search-code"
+#    googleSearch = "google-search-code"
     showDate = true # make false if dont want to show date for evergeen articles
     math = false # best to enable this in the front matter of a page
     githubLink = "rafed/ramium/"
