@@ -2,6 +2,7 @@
 title: "Multinode k8s cluster using ignite and k3s"
 date: 2020-05-17T18:22:05-03:00
 draft: false
+tags: ["linux","kubernetes"]
 ---
 Sometimes if you are working with kubernetes, or developing applications that require a multinode setup to test some functionality running a multinode cluster is a must, in some cases you could use [kind](https://kind.sigs.k8s.io/docs/user/quick-start/) which you can spin up multinode/multimaster clusters on docker, however there might be scenarios were you still need to test or develop functions that need the real feel of a cluster with multiple nodes.  
 In the past I have run this in my local environment running vms with vagrant and virtualbox, that worked very well, and I still use it for some special scenarios. But I needed something I could run more workers/masters on my local laptop. One clear example is that I wanted to test the [postgres operator from crunchydata](https://access.crunchydata.com/documentation/postgres-operator) that allows to create a postgres cluster with a stanby cluster in a different k8s cluster. Or try [kilo](https://github.com/squat/kilo) to setup encrypted communications between pods and test the multi cluster setup. Another use case was that I wanted to play with CNI plugins or some use some other advanced features, and the setup I will explain in this post allows more felxibility to do so.  

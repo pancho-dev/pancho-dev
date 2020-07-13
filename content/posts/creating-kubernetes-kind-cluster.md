@@ -2,6 +2,7 @@
 title: "Creating Kubernetes Kind Cluster"
 date: 2020-05-30T15:11:30-03:00
 draft: false
+tags: ["linux","kubernetes"]
 ---
 
 In an earlier post I showed how to create [Multinode k8s cluster using ignite and k3s]({{< relref "multinode-k8s-ignite-k3s.md" >}}), while this was a good experience I needed to test some other tools, and this time I decided to go for kind (kubernetes in docker). Which looks like a good approach to work with clusters locally and it will still be lightweight as the kubernetes "nodes" will be actually running as docker containers. This at first glance looks like a easier approach and seems to work in a similar way in Mac, linux or wirndows, which gives a great advantage.  

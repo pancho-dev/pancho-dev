@@ -2,6 +2,7 @@
 title: "Taming the Cpu Metrics"
 date: 2020-07-11T15:08:51-03:00
 draft: false
+tags: ["linux","performance"]
 ---
 
 In a past blog post I talked about [The misunderstood load average in linux hosts]({{< relref "linux-load-average.md" >}}), while load average is a good metric to watch in linux systems to catch generic performance problems, it does not reveal what the issue might be. This time I will dig more into cpu metrics collected from a linux system and explain them, for this purpose I will use multipass vms, and will be showing metrics from [grafana](https://grafana.com/) screnshots which take the data from [prometheus](https://prometheus.io/) and [prometheus node exporter](https://github.com/prometheus/node_exporter) (this is actually out of the scope of this post). To gather some metrics I will run a few vms in my home linux server and do some stress tests to catch some operations that will show in the cpu metrics and explain what each one of them is.
