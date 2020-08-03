@@ -1,7 +1,7 @@
 ---
 title: "Lightning post - Testing a reverse http proxy"
 date: 2020-08-03T14:05:25-03:00
-draft: true
+draft: false
 tags: ["proxy","development"]
 ---
 
