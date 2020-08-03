@@ -5,7 +5,7 @@ draft: false
 tags: ["proxy","development"]
 ---
 
-Did you eve had trouble with a proxy config? Found that is not simple to test a proxy locally?. Why this? simple, I found many times deploying a proxy configuration to production, even a small change like adding a new path, a redirection or just updating ssl certs, can lead to a disruption or an outage because sometimes it's hard to properly test it before pushing the configuration. So I found a couple od tricks that can help test locally in our laptops or machine before even pushing the code or config giving a safer path to deploy a proxy config.
+Did you ever had trouble with a proxy config? Found that is not simple to test a proxy locally?. Why this? simple, I found many times deploying a proxy configuration to production, even a small change like adding a new path, a redirection or just updating ssl certs, can lead to a disruption or an outage because sometimes it's hard to properly test it before pushing the configuration. So I found a couple od tricks that can help test locally in our laptops or machine before even pushing the code or config giving a safer path to deploy a proxy config.
 
 # What should I know beforehand?
 
