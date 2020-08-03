@@ -1,7 +1,7 @@
 ---
 title: "What is a lightning post?"
 date: 2020-08-02T13:07:20-03:00
-draft: true
+draft: false
 ---
 
 After about 2 months of launching this blog I realized that creating blog content is a time consuming task. While the whole purpose of my blog is to share some of my experiences and it's my own way to contribute to the open source community (most of what I talk about here is open source tech), I figured that I wanted to keep adding content every week, but some weeks it's much harder than other weeks to create a full blown blog post, I write this in my free time so between work and personal life it's hard to keep full blown projects every week. I really enjoy writing this posts and I want to keep contributing my experience even with smaller contributions, as a full blown blog post that might be about 20 min read takes me in average 6 to 8 hours to produce them and test the entire project, then I want to keep contributing but sometimes with less time consuming posts. That is what I will be publishing "lightning posts" alongside my regular full blown projects.
