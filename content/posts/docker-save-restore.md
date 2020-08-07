@@ -1,5 +1,5 @@
 ---
-title: "Lighting Post: Don't have a Docker registry? save and load to the rescue"
+title: "Lightning Post: Don't have a Docker registry? save and load to the rescue"
 date: 2020-08-06T20:30:48-03:00
 draft: false
 tags: ["docker","containers"]
