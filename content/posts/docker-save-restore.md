@@ -2,6 +2,7 @@
 title: "Lighting Post: Don't have a Docker registry? save and load to the rescue"
 date: 2020-08-06T20:30:48-03:00
 draft: false
+tags: ["docker","containers"]
 ---
 
 Whenever someone is working with docker and need to move images between hosts without the need for rebuilding them or hosting a private registry. This [lightning post]({{< relref "lightning-post.md" >}}) will show us 2 commands that will help us to easy move container images between hosts.
