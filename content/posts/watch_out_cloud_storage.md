@@ -2,7 +2,7 @@
 title: "Watch out with cloud storage API calls!!!"
 date: 2020-10-24T11:30:35-03:00
 draft: true
-tags: ["AWS","clouds", "storage","S3"]
+tags: ["AWS","Cloud", "Storage" , "S3", "Golang", "Python"]
 ---
 
 One of the most popular services from cloud providers is cloud storage, to be more specific AWS S3, Google Cloud Storage, Azure Storage or any similar service from other cloud providers. This service is very convenient for developers and SREs or System Admins, it solves the problem of managing disks, storage devices , storage servers, etc at a very low cost for storing files, depending on the cloud provider, some of them even offer a staggering 99.999999999% durability. Given the benefits and low cost of such services, I have seen more and more reliance on the cloud storage services.  
