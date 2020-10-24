@@ -1,7 +1,7 @@
 ---
 title: "Watch out with cloud storage API calls!!!"
 date: 2020-10-24T11:30:35-03:00
-draft: true
+draft: false
 tags: ["AWS","Cloud", "Storage" , "S3", "Golang", "Python"]
 ---
 
