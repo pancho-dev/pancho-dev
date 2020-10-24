@@ -35,7 +35,7 @@ This will restore the image in a new host or from a backup.
 
 # Bonus Track
 
-There are other commands that can be useful to export and import containers instead of images. While `docker save` and `docker load` are used to handle and copy container images. There might be times where we need to copy a container, it can be a container instance that has some data or modifications in it and we want to move it somewhere else. IMPORTANT: always differentiate both use cases as une of for images and other is for container.
+There are other commands that can be useful to export and import containers instead of images. While `docker save` and `docker load` are used to handle and copy container images. There might be times where we need to copy a container, it can be a container instance that has some data or modifications in it and we want to move it somewhere else. IMPORTANT: always differentiate both use cases as one is for images and other is for container.
 
 ```bash
 
@@ -49,6 +49,6 @@ This last example restores the backup of a container as an image not the contain
 
 # Conclusion
 
-I found this docker commans very handy when developing container and copying images from server to server without the need of a registry. It is something I use a lot at home for images I build and keep them localy, but I recommend using a private or public registry to keep your images, it simplifies the managing of container images, but we can't always have the infrastructure we need so this commands come very handy.  
+I found this docker commands very handy when developing container and copying images from server to server without the need of a registry. It is something I use a lot at home for images I build and keep them locally, but I recommend using a private or public registry to keep your images, it simplifies the managing of container images, but we can't always have the infrastructure we need so this commands come very handy.  
 I really care about being able to save and copy images as they are software artifacts and they need to be properly managed to be reused, I added a bonus track to show how to backup or copy and move a container just to differentiate the 2 operations, however if there is a need to use export it could be an indication that we are not following some recommended practices. This is not a hard "no" to use export, but in my case I always like to keep images and containers as immutable as possible and leave configurations outside of the container, this helps with reusability and reproducibility of a container, and if there is a need to modify some config inside the container either find a way to configure it with ENV vars or volume mount the config files so the container is easy to reproduce even if we destroy the container completely, this applies to stateful things like databases, always volume mount the data and take backups of that data. Reproducibility and reusability is something I take very serious as the same setup can be reproduced much faster and restore times get lowered, or it can be reused in multiple projects.
 

@@ -5,15 +5,15 @@ draft: false
 tags: ["linux","performance"]
 ---
 
-In a past blog post I talked about [The misunderstood load average in linux hosts]({{< relref "linux-load-average.md" >}}), while load average is a good metric to watch in linux systems to catch generic performance problems, it does not reveal what the issue might be. This time I will dig more into cpu metrics collected from a linux system and explain them, for this purpose I will use multipass vms, and will be showing metrics from [grafana](https://grafana.com/) screnshots which take the data from [prometheus](https://prometheus.io/) and [prometheus node exporter](https://github.com/prometheus/node_exporter) (this is actually out of the scope of this post). To gather some metrics I will run a few vms in my home linux server and do some stress tests to catch some operations that will show in the cpu metrics and explain what each one of them is.
+In a past blog post I talked about [The misunderstood load average in linux hosts]({{< relref "linux-load-average.md" >}}), while load average is a good metric to watch in linux systems to catch generic performance problems, it does not reveal what the issue might be. This time I will dig more into cpu metrics collected from a linux system and explain them, for this purpose I will use multipass vms, and will be showing metrics from [grafana](https://grafana.com/) screenshots which take the data from [prometheus](https://prometheus.io/) and [prometheus node exporter](https://github.com/prometheus/node_exporter) (this is actually out of the scope of this post). To gather some metrics I will run a few vms in my home linux server and do some stress tests to catch some operations that will show in the cpu metrics and explain what each one of them is.
 
 
 # Start virtual machines
 
-For the tests as I metioned before I will be running vms using multipass, and adding some configuration to them using ansible to get some basic software in order to look at the metrics in prometheus.  
+For the tests as I mentioned before I will be running vms using multipass, and adding some configuration to them using ansible to get some basic software in order to look at the metrics in prometheus.  
 ### Requirements
 - multipass installed
-- python virtualent, to run ansible in a isolated environment
+- python virtualenv, to run ansible in a isolated environment
 - jq, for parsing json output to generate ansible inventory
 
 Preparing vms for running tests.
@@ -206,18 +206,18 @@ To start viewing usage lets talk about what are the different components of cpu 
 
 CPU metrics in the top command show the percentage spent in each one of this "states", we will talk more about what they are.
 - `us` a.k.a user: this is the cpu time used by userspace processes. Most applications will show up within this percentage when they are using cpu.
-- `sy` a.k.a system: this is the cpu time spend by kernel processes, everytime there is interacion from user space processes, or I/O, or processing network traffic; anything that need to interact with the kernel will show up within this percentage.
-- `ni` a.k.a. nice: this is the cpu time spent by userspace processes that had been `niced`. Setting nice to a process will control the priority this process, this can be used to set priority lower when the process is invasive, or set to higher priority when the process need more guarateed cpu time, for example realtime applications. When a userspace process has been set with nice it will show in this metric.
+- `sy` a.k.a system: this is the cpu time spend by kernel processes, every time there is interaction from user space processes, or I/O, or processing network traffic; anything that need to interact with the kernel will show up within this percentage.
+- `ni` a.k.a. nice: this is the cpu time spent by userspace processes that had been `niced`. Setting nice to a process will control the priority this process, this can be used to set priority lower when the process is invasive, or set to higher priority when the process need more guaranteed cpu time, for example realtime applications. When a userspace process has been set with nice it will show in this metric.
 - `id` a.k.a. idle: this is the time where the cpu was idle, pretty much waiting to be used. In busy systems this will have a low value, and in not busy systems this will be high.
-- `wa` a.k.a. iowait: this is the time that the cpu was spent by waiting for I/O to happen. This value willl be high when there is a lot of access to disk or accessing hardware. But mostly will be when we are doing heavy reading/writing to disk.
-- `hi` a.k.a hardware interrupt or `si` a.k.a. software interrupt: This is the time the cpu spent processing interrupts, interrupts can be processed also by software with processes called softirqd or when the kernel spent time procesing a hardware interrupt. Either `hi` and `si` will mean that there is interaction with hardware happening. A normal case would be that this will spike when having high network traffic as the network card will generate lots of interrupts and it will affect the cpu usage.
-- `st` a.k.a. steal: this is the time spent waiting to get cpu time. This value will only show up when running in virtualized environments. The steal value means that someone else (a.k.a another virtual machine most likely) was using the cpu in this time, this happens when multiple virtual machines are sharing the same cores. It's a very interesteing metric to watch, specially when we are running vm's in the cloud or when we run virtual machines. Helps identify if the undelying host is oversubscribed or identify "noisy neighbors".
+- `wa` a.k.a. iowait: this is the time that the cpu was spent by waiting for I/O to happen. This value will be high when there is a lot of access to disk or accessing hardware. But mostly will be when we are doing heavy reading/writing to disk.
+- `hi` a.k.a hardware interrupt or `si` a.k.a. software interrupt: This is the time the cpu spent processing interrupts, interrupts can be processed also by software with processes called softirqd or when the kernel spent time processing a hardware interrupt. Either `hi` and `si` will mean that there is interaction with hardware happening. A normal case would be that this will spike when having high network traffic as the network card will generate lots of interrupts and it will affect the cpu usage.
+- `st` a.k.a. steal: this is the time spent waiting to get cpu time. This value will only show up when running in virtualized environments. The steal value means that someone else (a.k.a another virtual machine most likely) was using the cpu in this time, this happens when multiple virtual machines are sharing the same cores. It's a very interesting metric to watch, specially when we are running vm's in the cloud or when we run virtual machines. Helps identify if the underlying host is oversubscribed or identify "noisy neighbors".
 
-Next I will do some tests to try to spike each one of the values and show some situations that we might find in cpu metrics which will help us understand more the usage in the server we are watching. I will also show some sittuations that I recorded in my home lab doing other tests.  
-Most tests were perfomed in the vms that we created at the start of the post and they were added to a prometheus/grafana setup using the node exporter we installed there, which is out of the scope of this blog post.
+Next I will do some tests to try to spike each one of the values and show some situations that we might find in cpu metrics which will help us understand more the usage in the server we are watching. I will also show some situations that I recorded in my home lab doing other tests.  
+Most tests were performed in the vms that we created at the start of the post and they were added to a prometheus/grafana setup using the node exporter we installed there, which is out of the scope of this blog post.
 
 ## Idle server
-On of the easiest situations to catch is to know that our server is idle, or doing nothing. This is particularly usefull when I want to find servers that have been overprovisioned and are being underused. Catching servers with high `idle` metrics will help us either get smaller vms if we are running in the cloud, saving us some money or to know this server can be used for more applications and opimizing the usage of servers.  
+On of the easiest situations to catch is to know that our server is idle, or doing nothing. This is particularly useful when I want to find servers that have been over provisioned and are being underused. Catching servers with high `idle` metrics will help us either get smaller vms if we are running in the cloud, saving us some money or to know this server can be used for more applications and optimizing the usage of servers.  
 
 ![](../images/taming-the-cpu-metrics/idle1.png)
 
@@ -257,7 +257,7 @@ In the graph we can see during the stress test of the cpu, the testvm1 spiked th
 
 ![](../images/taming-the-cpu-metrics/user3.png)
 
-This last graph shows the cpu usage of the host running the vms, as we can see the yellow area spiked to 50% when the stress test was being run. This is due to the fact that the vm was assinged only 1 vcpu and the physical host has 2 cores.
+This last graph shows the cpu usage of the host running the vms, as we can see the yellow area spiked to 50% when the stress test was being run. This is due to the fact that the vm was assigned only 1 vcpu and the physical host has 2 cores.
 
 ## High I/O
 In this section I will show something I gathered from other tests I was running in a raspberry pi kubernetes cluster, this was handy as I recently was playing with that cluster and I already had the data to show this kind of situations.  
@@ -270,7 +270,7 @@ This graph gets more interesting as we have many things happening there.
 - Blue area: idle time, I am not going to explain this one as it was already explained before
 - Yellow area: userspace percentage, also not going to explain as it was already explained.
 - Green area: this is processes running in kernel space, in this case it made sense as kubernetes was probably doing a lot of operations at the kernel level to start and schedule containers on the node. Also when having high I/O also there is a spike in kernel space processes as all reads/writes pass through the kernel.
-- Light Blue Area: this is the time spent by processes that were `niced` which means that either were assingned higher or lower prioritie than the rest of the processes. In this case it makes sense as probably at the moment kubernetes was running a process that needed more priority than others, or the other way around. In fact this will give as a hint to investgate further what those process were and how to optimize if they were causing issues.
+- Light Blue Area: this is the time spent by processes that were `niced` which means that either were assigned higher or lower priorities than the rest of the processes. In this case it makes sense as probably at the moment kubernetes was running a process that needed more priority than others, or the other way around. In fact this will give as a hint to investigate further what those process were and how to optimize if they were causing issues.
 
 ## High interrupts
 In this case to test a scenario that generates a high amount of interrupts I will run a network traffic stress test between testvm1 and testvm2, for that we will use `iperf` tool already installed with the ansible playbook.
@@ -326,7 +326,7 @@ Following I will show the graphs for all 3 vms.
 
 ![](../images/taming-the-cpu-metrics/steal3.png)
 
-As we can see the cpu usage pattern in the 3 vms was very similar. But there is an interesitng part.
+As we can see the cpu usage pattern in the 3 vms was very similar. But there is an interesting part.
 
 - Yellow area: this time we can see that the userspace percentage never got to 100% like the one was shown in the userspace section. This is due to the fact that there were 3 vms trying to use 100% of their vcpus but the underlying host has only 2 cores, which translates to each vm having 
 less cpu time for them as the physical cores were shared among the 3 vms.
@@ -337,6 +337,6 @@ This is a particular scenario were it is useful to know if my vm is being affect
 
 # Conclusion
 
-There are many situations where the cpu might become a bottleneck, cpu metrics are quite revealing and will give us a hint what to look for next to find the issue that is caussing performance problems. I wanted to show in this post with examples of common problems I have seen in production systems and I wanted to reproduce them and explain how to get an interpretation out of the metrics. I explained a few situations that will catch most performance problems when it comes to cpu, and sometimes not even cpu but the metrics will "tell" us where else to look. For example high iowait in cpu is telling us to look more what is happeing with i/o, specially on disks, maybe we will need faster disks or optimize the application for disk access. Also catching the interrups because of network traffic might indicate us to start tunning the kernel for better network performance. Or the if we see cpu steal spiking might mean that we need a bigger host or that we are running too many vms on the host.  
+There are many situations where the cpu might become a bottleneck, cpu metrics are quite revealing and will give us a hint what to look for next to find the issue that is causing performance problems. I wanted to show in this post with examples of common problems I have seen in production systems and I wanted to reproduce them and explain how to get an interpretation out of the metrics. I explained a few situations that will catch most performance problems when it comes to cpu, and sometimes not even cpu but the metrics will "tell" us where else to look. For example high iowait in cpu is telling us to look more what is happening with i/o, specially on disks, maybe we will need faster disks or optimize the application for disk access. Also catching the interrupts because of network traffic might indicate us to start tuning the kernel for better network performance. Or the if we see cpu steal spiking might mean that we need a bigger host or that we are running too many vms on the host.  
 Anyway, there are millions of combinations of what we can see in the cpu metrics, I wanted to reproduce common problems I faced in the past and most look similar to what I saw in production systems.  
-Remeber to really understand the metrics before jumping into conclusions. Many times I miss where the issue is because the lack of understanding the metrics I am looking at, so take a few minutes and read the documetation on the metrics and that will help finding issues faster and more accurately.
+Remember to really understand the metrics before jumping into conclusions. Many times I miss where the issue is because the lack of understanding the metrics I am looking at, so take a few minutes and read the documentation on the metrics and that will help finding issues faster and more accurately.

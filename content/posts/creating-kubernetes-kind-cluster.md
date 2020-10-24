@@ -5,8 +5,8 @@ draft: false
 tags: ["linux","kubernetes"]
 ---
 
-In an earlier post I showed how to create [Multinode k8s cluster using ignite and k3s]({{< relref "multinode-k8s-ignite-k3s.md" >}}), while this was a good experience I needed to test some other tools, and this time I decided to go for kind (kubernetes in docker). Which looks like a good approach to work with clusters locally and it will still be lightweight as the kubernetes "nodes" will be actually running as docker containers. This at first glance looks like a easier approach and seems to work in a similar way in Mac, linux or wirndows, which gives a great advantage.  
-Also this time I choose to work with kind because it allows to do a lot of stuff like simulating multiple control plane nodes and multiple workernodes. In my case I did wanted multiple nodes to try things like running postgres clusters and use anti affinity to develop in my laptop some automation around postgres clusters. It is very fast to start a cluster and play around with multiple clusters. Another cool feature is that is easy to start a cluster with multiple masters and the setup of the cluster seems a very "vanilla" k8s cluster which is and advantage to be running things similar to what you would run in production others like k3s or microk8s use a lot of lightweight components that might not actually look like "production clusters", however this is still a very personal opinion and depends on the needs of the developer and all have pros and cons. We will see how it looks like after I actually finish the post and get some conclusions.
+In an earlier post I showed how to create [Multi-node k8s cluster using ignite and k3s]({{< relref "multinode-k8s-ignite-k3s.md" >}}), while this was a good experience I needed to test some other tools, and this time I decided to go for kind (kubernetes in docker). Which looks like a good approach to work with clusters locally and it will still be lightweight as the kubernetes "nodes" will be actually running as docker containers. This at first glance looks like a easier approach and seems to work in a similar way in Mac, linux or Windows, which gives a great advantage.  
+Also this time I choose to work with kind because it allows to do a lot of stuff like simulating multiple control plane nodes and multiple worker nodes. In my case I did wanted multiple nodes to try things like running Postgres clusters and use anti affinity to develop in my laptop some automation around Postgres clusters. It is very fast to start a cluster and play around with multiple clusters. Another cool feature is that is easy to start a cluster with multiple masters and the setup of the cluster seems a very "vanilla" k8s cluster which is and advantage to be running things similar to what you would run in production others like k3s or microk8s use a lot of lightweight components that might not actually look like "production clusters", however this is still a very personal opinion and depends on the needs of the developer and all have pros and cons. We will see how it looks like after I actually finish the post and get some conclusions.
 
 # Installation
 
@@ -137,7 +137,7 @@ Before proceeding we will have to delete our cluster and
 $ kind delete clusters my-cluster
 Deleted clusters: ["my-cluster"]
 ```
-We will need to setup ingress controller and some port mappings to the workloads we want to run, if we want to access the workloads from the machine. Here are the official docs how to configure an [ingres](https://kind.sigs.k8s.io/docs/user/ingress/) in kind.  
+We will need to setup ingress controller and some port mappings to the workloads we want to run, if we want to access the workloads from the machine. Here are the official docs how to configure an [ingress](https://kind.sigs.k8s.io/docs/user/ingress/) in kind.  
 
 ```bash
 # To create the cluster again we will take a dirrefent approach.
@@ -272,7 +272,7 @@ dc1c539eb315        kindest/node:v1.18.2   "/usr/local/bin/entr…"   13 minutes
 9c92b0528a6a        kindest/node:v1.18.2   "/usr/local/bin/entr…"   13 minutes ago      Up 13 minutes                                                                                                     my-cluster-worker2
 ```
 Now we have a ready to go cluster to play around running my workloads...  
-In the next setion we will run a hello world app that will help
+In the next section we will run a hello world app that will help
 
 # Running a workload
 We will run the workload the same way as a previous [post]({{< relref "multinode-k8s-ignite-k3s.md" >}}) so we can compare one another.  
@@ -355,8 +355,8 @@ BODY:
 # Conclusions
 
 I really enjoyed running kind on my laptop for this test. It's a great tool to run kubernetes clusters very fast in a local laptop, the official documentation is good.  
-I like the fact that I could run multiple "nodes" in my cluster also there is some tunning that can be done to suit your needs, it is very easy to spin up clusters with multiple control planes, it is very lightweight as it is running docker containers (if you are running on windows or Mac, it's still running 1 vm).  
-Takes care of all boilerplate configs specially kubectl config, and integrates in a seemless way with your exisiting kube config adding and removing contexts as you create clusters, this is great because in the past I had trouble with other tools screwing my kube config.  
+I like the fact that I could run multiple "nodes" in my cluster also there is some tuning that can be done to suit your needs, it is very easy to spin up clusters with multiple control planes, it is very lightweight as it is running docker containers (if you are running on windows or Mac, it's still running 1 vm).  
+Takes care of all boilerplate configs specially kubectl config, and integrates in a seamless way with your existing kube config adding and removing contexts as you create clusters, this is great because in the past I had trouble with other tools screwing my kube config.  
 But the feature I liked the most is speed, everything happens really fast and it is easy to teardown and spin it back up in a matter of minutes without a lot of effort, making it easy to start over when things go wrong.  
-What I din't like, is that there are some limitations because of the fact that it's running in docker, specially if you are working with ingresses configurations or load balancers some special configurations or hacks need to be put in place to make them work which makes harder to reproduce staging or production environments when trying to automate deployments. It is limited in the networking side when tryning some CNI plugins like multus where you might need to have "nodes" with special configurations in order to get multiple networks working.  
+What I din't like, is that there are some limitations because of the fact that it's running in docker, specially if you are working with ingresses configurations or load balancers some special configurations or hacks need to be put in place to make them work which makes harder to reproduce staging or production environments when trying to automate deployments. It is limited in the networking side when trying some CNI plugins like multus where you might need to have "nodes" with special configurations in order to get multiple networks working.  
 However, it is still a great tool to develop and work with and still have a good environment to develop in a local environment. It is still considered alpha stage and it can't be deployed in production environments, it's main purpose is development of applications and kubernetes components.
