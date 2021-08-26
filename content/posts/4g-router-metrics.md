@@ -39,12 +39,13 @@ Log in is a POST request and ofrm data parameters are
 - goformId=LOGIN
 - password=YWRtaW4%3D
 - username=YWRtaW4%3D
-NOTE: that password and username are first base64 encoded and then URL encoded so decodes URL to YWRtaW4= which decodes base64 to admin. Yes I tested this weith admin/amdin user password. Off course this needs to be changed as soon as possible.
+NOTE: that password and username are first base64 encoded and then URL encoded so decodes URL to YWRtaW4= which decodes base64 to admin. Yes I tested this weith admin/admin user password. Off course this needs to be changed as soon as possible.
 
 ### Finding what data to collect
 After log in we should be able to get all needed info, there seems to be 1 endpoint for getting all the data we need to export metrics, and the good news is that the router responds in json format. The enpoint is `/goform/goform_get_cmd_process` and the it will return the data based on the paramenters passed to the http GET request.
 ```
-curl -s -X GET http://192.168.150.1/goform/goform_get_cmd_process\?cmd\=realtime_tx_bytes%2Crealtime_rx_bytes%2Csimcard_roam%2Crealtime_tx_thrpt%2Crealtime_rx_thrpt%2Crealtime_time%2Cmonthly_tx_bytes%2Cmonthly_rx_bytes%2Cflux_month_total\&multi_data\=1\&_\=1629929177313 | jq
+curl -s -X GET \
+http://192.168.150.1/goform/goform_get_cmd_process\?cmd\=realtime_tx_bytes%2Crealtime_rx_bytes%2Csimcard_roam%2Crealtime_tx_thrpt%2Crealtime_rx_thrpt%2Crealtime_time%2Cmonthly_tx_bytes%2Cmonthly_rx_bytes%2Cflux_month_total\&multi_data\=1\&_\=1629929177313 | jq
 {
   "realtime_tx_bytes": "422109",
   "realtime_rx_bytes": "6302856",
@@ -57,7 +58,12 @@ curl -s -X GET http://192.168.150.1/goform/goform_get_cmd_process\?cmd\=realtime
   "flux_month_total": "129482493"
 }
 ```
-The previour curl request shows one example of the queries you can issue to. One parameter you can pass to the `/goform/goform_get_cmd_process` endpoint using GET method is named `cmd` and `multi_data=1`. To the cmd parameter we need to pass a comma separated list of fields we need.  After this step I needed to find first on the UI which data I want for metrics.
-
+The previour curl request shows one example of the queries you can issue to. One parameter you can pass to the `/goform/goform_get_cmd_process` endpoint using GET method is named `cmd` and `multi_data=1`. To the cmd parameter we need to pass a comma separated list of fields we need.  After this step I needed to find first on the UI which data I want for metrics.  
+Looking at the home 4G router's home page
+![](../images/4g-router-metrics/home1.png)
+There is a bunch of usefull information I would like to store in my monitoring system. I would to get wireless network information and signal information as well as traffic statistics from the home page. Also other information could be useful to get data for labelling metrics and such.  
+There is also a page with more detailed wireless network information
+![](../images/4g-router-metrics/network1.png)
+From this page I want the get the most benefit. There is a bunch of good information to get out of the page. First the metrics I am interested in are RSRP/RSCP, SINR, RSSI and RSRQ which are metrics that indicate how the wireless signal is behaving, Also the other data is useful for loke operator, eNodebID, etc are candidates for labels in prometheus for the before mentioned metrics. So that way we can identify that we are jumping between cell towers or even operators. Also I would like to fin how the bar signal are calculated at the top right of the page, which is a more quick measure how the signal strenght is. All this values I want to keep them for long term to see how signal is is looking over time.
 
 
