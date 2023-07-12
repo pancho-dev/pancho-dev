@@ -4,7 +4,8 @@ title = "pancho.dev"
 #CanonifyURLs=true
 theme = "ramium"
 #disqusShortname = "disqus-code"
-googleAnalytics = "UA-920705-12"
+#googleAnalytics = "UA-920705-12"
+googleAnalytics = "G-WBLGT7MX26"
 pluralizeListTitles = false
 enableemoji = true
 

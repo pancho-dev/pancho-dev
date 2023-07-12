@@ -1,6 +1,7 @@
 [submodule "themes/ramium"]
 	path = themes/ramium
-	url = https://github.com/rafed/ramium.git
+	url = https://github.com/fcastello/ramium.git
+    branch = Add-support-for-google-analytics-4
 [submodule "public"]
 	path = public
 	url = https://github.com/pancho-dev/pancho-dev.github.io.git
