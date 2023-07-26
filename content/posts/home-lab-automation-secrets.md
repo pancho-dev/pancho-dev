@@ -20,7 +20,7 @@ Also something to have in mind is that Bitwarden does not store any of your pass
 
 Something important is to remind that the vault is downloaded and synchronized at intervals to the the Bitwarden server, so if you recently added a secret on the phone app or desktop app, to make sure you have the latest secret its always good to synchronize the vault before pulling any secret.  
 
-- Login
+### Login
 ```bash
 # Loging in to bitwarden
 # We will fist print the help for logging in to see what options we have
