@@ -1,7 +1,7 @@
 ---
 title: "Secrets Manager for Home Lab Automation"
 date: 2023-07-25T15:19:00-03:00
-draft: true
+draft: false
 ---
 
 One of the problems I found when working with my home lab is that I was lacking a solution for storing secrets. Even though there are open source solutions like Hashicorp vault to manage secrets, and managing it something requires maintenance and I didn't want to have the operational burden.  
