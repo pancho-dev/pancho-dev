@@ -45,7 +45,7 @@ $ sudo docker export testcontainer | gzip > testcontainer.tar.gz
 # Restore a copy of a container as an image
 $ sudo gzcat testcontainer.tar.gz | sudo docker import - testimage:new
 ```
-This last example restores the backup of a container as an image not the container itself. So in this case the import will create a new image named `testimage:new` that will that will have all changes that testcontainer had, however the new container needs to be started with the new image in order for full restore.
+This last example restores the backup of a container as an image not the container itself. So in this case the import will create a new image named `testimage:new` that will have all changes that testcontainer had, however the new container needs to be started with the new image in order to run it.
 
 # Conclusion
 

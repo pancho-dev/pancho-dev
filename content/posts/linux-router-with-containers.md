@@ -5,7 +5,7 @@ draft: false
 tags: ["docker","network","linux"]
 ---
 One of my passions in technology is networking, another passion is open source and linux. So sometimes I come across networking software or just to play around with linux standard networking tools like iptables, tc or iproute2, or even play with open source implementations of routing protocols using Quagga/Bird/FRR/go-bgp.  
-I always found hard when testing this tools to get a proper setup on my laptop. Off course there are some tools that already help us in this regard like GNS3. However, using GNS3 I need to provide virtual machine images and configure all of them to save specific topologies. I wanted something that I can use quick and simple without the need of installing and keeping vms images on my laptop. Another requirement I had was to keep it as light as possible and wasy to reproduce, keep as much as possible of it as code.  
+I always found hard when testing these tools to get a proper setup on my laptop. Of course there are some tools that already help us in this regard like GNS3. However, using GNS3 I need to provide virtual machine images and configure all of them to save specific topologies. I wanted something that I can use quick and simple without the overhead of managing virtual machines and their configurations.  
 First thing I though of was set up vagrant linux vms with extra network interfaces and use ansible to configure the virtualized linux routers.  
 Then I thought, why not do it in docker?
 
@@ -52,7 +52,7 @@ In this example there are some limitations and requiremens. We need root access 
 - Running on Raspberry Pi 4 with 8G RAM (however with a 1G RAM would be more than enough)
 - Docker CE 20.10.8
 
-I tested this on a raspberry pi to just show it can be run in very resource constrained setup. Off course if running more complex software like FRR or BIRD might have more memory needs.
+I tested this on a raspberry pi to just show it can be run in very resource constrained setup. Of course if running more complex software like FRR or BIRD might have more memory needs.
 
 # Starting the containers
 

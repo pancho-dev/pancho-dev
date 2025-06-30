@@ -17,7 +17,7 @@ We should know the behavior of the proxy beforehand as testing might be a bit di
 - Is it plain http or https?
 - Is the proxy terminating tls or passing through ssl to the backends?
 
-This is not an extensive list but the will give a pretty good understanding how to test it locally on our development machine. The primary issue when testing a proxy locally is that the dns address of the proxy is not the same as production, but we can simulate it very easy and debug locally before pushing to staging or production.  
+This is not an extensive list but they will give a pretty good understanding how to test it locally on our development machine. The primary issue when testing a proxy locally is that the dns address of the backend services might not be resolvable from our local machine, so we need to find ways to work around this limitation.  
 One thing to have in mind is that it's much easier to test a proxy running plain http, I will explain that a bit, but with todays requirements running something in plain http without redirecting to https is a major design flaw as https is pretty much a standard way of communicating today. I will explain http, but If you need to test plain http then means that something needs to be reviewed in you proxy config.  
 ALL following tests assume we are running the proxy locally in our machine and that is bound to localhost or 127.0.0.x and using standard http (80) and https (443) ports. Also I am assuming all http methods are `GET` requests, but this can be implemented with all valid http methods, like `POST`, `PUT`, `DELETE`, etc.
 

@@ -7,7 +7,7 @@ draft: false
 One of the problems I found when working with my home lab is that I was lacking a solution for storing secrets. Even though there are open source solutions like Hashicorp vault to manage secrets, and managing it something requires maintenance and I didn't want to have the operational burden.  
 I used to manage my password with a KeePass vault file. However that solution fell short when dealing with multiple devices like phones and multiple laptops. So I chose a password manager. I ended up choosing Bitwarden as a password manager, one of the reasons I chose this solution was that it is open source and if I ever want to host it myself I can migrate to the open source version and migration will bee seamless to a hosted solution. I still chose the cloud version of it. And at some point working on my labs I decided to use my password manager to store the secrets I need for my automations.  
 Bitwarden offers a cli tool which is pretty handy for automations, it outputs secrets in json format which is pretty useful to be used in any language. I chose to keep things simple and use it on the shell and parse it with jq tool, one downside of the bitwarden CLI tool is that they don't offer a build for linux arm64 arch, so if you are running on a raspberry pi you will have to build the tool from source.  
-This post is opinionated to Bitwarden, but the same concepts should work for other password managers CLI tools, off source depending on outputs a few things should be adapted to other password managers outputs.
+This post is opinionated to Bitwarden, but the same concepts should work for other password managers CLI tools, of course depending on outputs a few things should be adapted to other password managers outputs.
 
 
 # Logging in
@@ -93,7 +93,7 @@ Now we can get the session token and use it in our shell or scripts as we please
 $ export BW_SESSION=$(bw login francisco@example.com --raw)
 ? Master password: [hidden]
 
-# now we output the variable (this is just to check, no need for this step once we know it's valueor print it)
+# now we output the variable (this is just to check, no need for this step once we know its value or print it)
 $ echo $BW_SESSION 
 oRWccGyrilYt4ov1rfGS+8Ea8Juihce+/azz83QCZHqj4vZIRGVtnGn+mishRxqvnBTELHwuVxRfrAXnecMPtg==
 
@@ -212,7 +212,7 @@ From the output if that command we can get several data. However I will focus on
 
 - type: The type of secret stored, it's a numeric value and mapping is: 1 login, 2 note, 3 credit Card , 4 Identity. We will focus on 1 and 2 as they have different fields but others can be used if needed.
 
-- notes: This is freeform plan text field to save notes on a secret. This can be useful to store for example a public key however there are other type of secret that can be used for keys. and we will review it later on this post
+- notes: This is freeform plain text field to save notes on a secret. This can be useful to store for example a public key however there are other type of secret that can be used for keys. and we will review it later on this post
 
 - login: Is a collection of objects for the login, I will focus on the ones relevant for automations
   - username: login username 
@@ -537,3 +537,7 @@ After setting all environment variables we would be all set for running the terr
 Using a password manager can be handy for those hobbyists who run home labs or cloud resources for personal purposes. In my case I was already using Bitwarden Password manager for personal secrets management so I integrated to my personal projects, without incurring in extra costs or setting up something else which requires maintenance.  
 A password manager could be used in an enterprise environment for automation purposes using shared secrets among users, however the level of control over the secrets probably is not the best fit as there are better solutions for enterprise environments like AWS Secrets manager, Google cloud Secret manager, Hashicorp vault in either enterprise version or open source, or Azure Key Vault. These solutions offer features better suited for enterprise use and finer grained control over secrets.  
 Back to personal use I am very happy with the solution, as I used to copy the passwords or a hardcoded files for environment variables or just kept them hardcoded in the code. This solutions allows me to keep the secrets safe outside of the code and files and it's ephemeral to runtime whenever used.
+
+This last example restores the backup of a container as an image not the container itself. So in this case the import will create a new image named `testimage:new` that will have all changes that testcontainer had, however the new container needs to be started with the new image in order to run it.  
+
+I would recommend to use `docker save` and `docker load` instead of `docker export` and `docker import` following some recommended practices. This is not a hard "no" to use export, but in my case I always like to keep images and containers as immutable as possible and leave configurations outside of the container, this helps with reusability

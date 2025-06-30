@@ -217,7 +217,7 @@ Next I will do some tests to try to spike each one of the values and show some s
 Most tests were performed in the vms that we created at the start of the post and they were added to a prometheus/grafana setup using the node exporter we installed there, which is out of the scope of this blog post.
 
 ## Idle server
-On of the easiest situations to catch is to know that our server is idle, or doing nothing. This is particularly useful when I want to find servers that have been over provisioned and are being underused. Catching servers with high `idle` metrics will help us either get smaller vms if we are running in the cloud, saving us some money or to know this server can be used for more applications and optimizing the usage of servers.  
+One of the easiest situations to catch is to know that our server is idle, or doing nothing. This is particularly useful when we want to know if our server is actually being used or if we can shut it down to save costs.
 
 ![](../images/taming-the-cpu-metrics/idle1.png)
 

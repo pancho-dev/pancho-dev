@@ -49,7 +49,7 @@ drwxr-xr-x 2 nobody nogroup 4.0K Jun 27 17:00 chunks
 -rw-r--r-- 1 nobody nogroup  279 Jun 27 17:00 meta.json
 -rw-r--r-- 1 nobody nogroup    9 Jun 27 17:00 tombstones
 ```
-Ever since I looked into that folder I wondered about the logic behind the design. Then some day I was looking thought the Prometheus code and I came across the term ulid. Off course I quickly googled the term and found out what it was, then the whole directory structure stated to make sense. I won't get into details of that as it is a subject matter that probably could get 2 or 3 blog posts itself. But I will get into details what ulid are and it might give developers some perspective to solve some problems in a clever way like Prometheus developers did.
+Ever since I looked into that folder I wondered about the logic behind the design. Then some day I was looking thought the Prometheus code and I came across the term ulid. Of course I quickly googled the term and found out what it was, then the whole directory structure stated to make sense. I won't get into details of that as it is a subject matter that probably could get 2 or 3 blog posts itself. But I will get into details what ulid are and it might give developers some perspective to solve some problems in a clever way like Prometheus developers did.
 
 
 # What is it then?
@@ -95,7 +95,7 @@ This is an advantage and a disadvantage at the same time. Why? It depends on the
 There are no standards defining ulids, this is just a spec that is hosted in github, which means that someone created the concept and shared it to the world. While UUIDs are an industry standard and they have their own [rfc4122](https://www.ietf.org/rfc/rfc4122.txt), UUIDs can be used for interoperability between vendors. While ulid doesn't have an RFC which might be a problem when you need to interoperate with vendors. Although, a ulid can be converted and represented as a UUID when needed.
 
 #### Implementations might diverge
-This is related to the previous disadvantage, since this is a spec and not backed by an industry standard, implementation is subject to interpretation and some implementations might have slightly different behavior than other. Off course having an RFC is not guarantee that implementations will be the same, in general RFC are topics already discussed by a group of people/vendors/companies making it a standard and making it easy for interoperate.
+This is related to the previous disadvantage, since this is a spec and not backed by an industry standard, implementation is subject to interpretation and some implementations might have slightly different behavior than other. Of course having an RFC is not guarantee that implementations will be the same, in general RFC are topics already discussed by a group of people/vendors/companies making it a standard and making it easy for interoperate.
 
 #### No tools to manipulate ulids
 There are libraries for all major languages, but ulid is still missing tools to manipulate ulids in the operating systems, all major operating systems like Mac or linux already have some kind of tool for generating UUIDs like `uuidgen` or something similar. I haven't found tools to generate ulids out of the box without having to install a programing language and the library to generate the ulid.
@@ -113,7 +113,7 @@ Some examples:
 - Events in a distributed system
 - Time series blocks (Prometheus use case)
 
-I wanted to point out a use case that catches my attention and probably would have saved some problems with race conditions when sending messages in an async messaging platform and still have events that need to be ordered. In an distributed system sending messages/events to other systems and attaching a ulid to the message would help prevent or detect race conditions, it won't guarantee that my messages arrived in order but at least I would know that I got a message older than a message that I already received. Helping detect and remediate the situation that might have generated a race condition. Well this is not a bulletproof approach but would helped to detect some of this situations.
+I wanted to point out a use case that catches my attention and probably would have saved some problems with race conditions when sending messages in an async messaging platform and still have events that need to be ordered. In an distributed system sending messages/events to other systems and attaching a ulid to the message would help prevent or detect race conditions, it won't guarantee that my messages arrived in order but at least I would know that I got a message older than a message that I already received. Helping detect and remediate the situation that might have generated a race condition. Well this is not a bulletproof approach but would helped to detect some of these situations.
 
 #### Example
 
