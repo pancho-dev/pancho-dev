@@ -11,6 +11,11 @@ hugo # if using a theme, replace with `hugo -t <YOURTHEME>`
 # Go To Public folder
 cd public
 
+# Ensure submodule is on a branch (not detached) and up to date.
+git fetch origin
+git checkout master
+git pull --ff-only origin master
+
 # Add changes to git.
 git add .
 
@@ -19,7 +24,7 @@ msg="rebuilding site $(date)"
 if [ -n "$*" ]; then
 	msg="$*"
 fi
-git commit -m "$msg"
+git commit -m "$msg" || true
 
 # Push source and build repos.
 git push origin master
