@@ -1,0 +1,44 @@
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+.blog-text .mermaid {
+    display: flex;
+    justify-content: center;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+}
+.blog-text .mermaid svg {
+    max-width: 100%;
+    height: auto;
+}
+.blog-text .mermaid .cluster rect {
+    fill: transparent !important;
+    stroke: none !important;
+}
+.blog-text .mermaid .cluster .cluster-label {
+    display: none;
+}
+@media (max-width: 768px) {
+    .blog-text .mermaid {
+        justify-content: flex-start;
+    }
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', async function () {
+    mermaid.initialize({
+        startOnLoad: false,
+        securityLevel: 'loose',
+        flowchart: { useMaxWidth: true, htmlLabels: true }
+    });
+
+    document.querySelectorAll('pre > code.language-mermaid').forEach(function (code) {
+        const pre = code.parentElement;
+        const div = document.createElement('div');
+        div.className = 'mermaid';
+        div.textContent = code.textContent;
+        pre.replaceWith(div);
+    });
+
+    await mermaid.run();
+});
+</script>
