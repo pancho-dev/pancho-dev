@@ -6,8 +6,8 @@ theme = "ramium"
 [services]
   [services.disqus]
     shortname = ""
-#googleAnalytics = "UA-920705-12"
-googleAnalytics = "G-WBLGT7MX26"
+  [services.googleAnalytics]
+    id = "G-WBLGT7MX26"
 pluralizeListTitles = false
 enableemoji = true
 
